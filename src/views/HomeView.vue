@@ -8,10 +8,15 @@
       :isEditing="isEditing"
       @delete="deleteFromApi"
     />
-    <BookCard @click.native="toggleAdd" v-if="isEditing" />
-    <form v-if="isAdding" class="w-full top-0 left-0 fixed bg-black/50 h-full">
-      <AddMore @adding="toggleAdd" :data="authors" />
-    </form>
+    <BookCard @add="toggleAdd" v-if="isEditing" />
+    <transition name="fade">
+      <form
+        v-if="isAdding && isEditing"
+        class="w-full top-0 left-0 fixed bg-black-800/50 h-full"
+      >
+        <AddMore @cancel="toggleAdd" @add="postToApi" :data="authors" />
+      </form>
+    </transition>
   </div>
 </template>
 
@@ -19,17 +24,16 @@
 import AddMore from "../components/AddMore.vue";
 import BookCard from "../components/BookCard.vue";
 import { ref } from "vue";
-const isAdding = ref(false);
-const props = defineProps(["data", "authors", "isEditing"]);
-const emits = defineEmits(["deleteRequest"]);
-function testFunction() {
-  console.log("clicked");
-}
+const props = defineProps(["data", "authors", "isEditing", "isAdding"]);
+const emits = defineEmits(["deleteRequest", "adding", "postRequest"]);
+
 function toggleAdd() {
-  isAdding.value = !isAdding.value;
+  emits("adding");
 }
 function deleteFromApi(value) {
-  console.log(value);
   emits("deleteRequest", value);
+}
+function postToApi() {
+  emits("postRequest", value);
 }
 </script>

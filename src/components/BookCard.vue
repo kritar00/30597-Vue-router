@@ -15,9 +15,9 @@
     >
     <router-link
       class="whitespace-nowrap overflow-hidden block"
-      :to="`/author/${item.authorID}`"
+      :to="`/author/${item.author.authorID}`"
     >
-      Author: {{ item.author }}
+      Author: {{ item.author.authorName }}
     </router-link>
     <p class="font-bold">Price: ${{ item.price }}</p>
     <button
@@ -30,7 +30,7 @@
   </div>
   <div
     v-else
-    @click="test"
+    @click="onClickOpenAdd"
     class="flex cursor-pointer flex-col justify-center items-center border-4 border-dashed"
   >
     <h2 class="text-2xl text-slate-300">ADD</h2>
@@ -41,12 +41,15 @@
 <script setup>
 import defaultImg from "../assets/defaultImage.jpg";
 const props = defineProps(["item", "isEditing"]);
-const emits = defineEmits(["delete"]);
+const emits = defineEmits(["delete", "add"]);
 const replaceByDefault = (e) => {
   e.target.src = defaultImg;
 };
 function onClickDelete() {
   emits("delete", props.item.id);
+}
+function onClickOpenAdd() {
+  emits("add");
 }
 </script>
 <script>

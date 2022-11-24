@@ -1,8 +1,8 @@
 <template>
-  <label class="w-full">
-    <span class="whitespace-nowrap font-bold">{{ label }}</span>
+  <label class="w-full block py-2">
+    <span class="whitespace-nowrap font-bold text-black-800">{{ label }}</span>
     <input
-      class="w-full shadow-lg"
+      class="w-full shadow-lg py-2 border border-cornflower-blue-400 rounded"
       :type="type"
       :value="modelValue"
       v-bind="$attrs"

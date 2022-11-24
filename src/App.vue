@@ -1,14 +1,16 @@
 <script setup>
 import axios from "axios";
 import { ref, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 import Sidebar from "./components/Sidebar.vue";
-import burger from "./assets/hamburger.svg";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const books = ref([]);
 const authors = ref([]);
-const isOpen = ref(false);
+const isOpenSidebar = ref(false);
 const isEditing = ref(false);
+const isAdding = ref(false);
+const router = useRouter();
 async function getData(URL, data) {
   const response = await axios.get(URL);
   data.value = response.data;
@@ -25,13 +27,21 @@ function deleteFromApi(value) {
   deleteData(bookURL, value);
 }
 function toggleSidebar() {
-  isOpen.value = !isOpen.value;
+  isOpenSidebar.value = !isOpenSidebar.value;
 }
 function toggleEditing() {
   isEditing.value = !isEditing.value;
+  if (isEditing.value == false) isAdding.value = false;
+}
+function toggleAdding() {
+  isAdding.value = !isAdding.value;
 }
 const editIconCompute = computed(() => {
   return isEditing.value ? "uil uil-times" : "uil uil-edit";
+});
+router.beforeEach((to, from, next) => {
+  if (isEditing.value) isEditing.value = !isEditing.value;
+  next();
 });
 onMounted(() => {
   getData(bookURL, books);
@@ -57,10 +67,10 @@ onMounted(() => {
       <i :class="editIconCompute" class="text-white text-4xl"></i>
     </button>
   </header>
-  <Transition name="fade">
+  <Transition name="slide-fade">
     <Sidebar
       class="z-50"
-      v-if="isOpen"
+      v-if="isOpenSidebar"
       @toggleSidebar="toggleSidebar"
       :authors="authors"
     />
@@ -68,12 +78,14 @@ onMounted(() => {
   <router-view
     :data="books"
     @deleteRequest="deleteFromApi"
+    :isAdding="isAdding"
+    @adding="toggleAdding"
     :isEditing="isEditing"
     :authors="authors"
   />
 </template>
 
-<style scoped>
+<style>
 .slide-fade-enter-active {
   transition: all 0.3s ease-out;
 }
@@ -82,7 +94,7 @@ onMounted(() => {
 }
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateX(20px);
+  transform: translateX(-20px);
   opacity: 0;
 }
 .fade-enter-active,
