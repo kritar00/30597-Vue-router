@@ -21,7 +21,9 @@
         </p>
       </div>
     </div>
-    <router-link :to="`/author/${item.authorID}`" class="float-right py-4"
+    <router-link
+      :to="`/author/${item.author.authorID}`"
+      class="float-right py-4"
       >More info about this author<i class="uil uil-angle-right-b"></i
     ></router-link>
   </div>

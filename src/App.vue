@@ -15,16 +15,30 @@ async function getData(URL, data) {
   const response = await axios.get(URL);
   data.value = response.data;
 }
-async function postData(URL, data) {
-  await axios.post(URL);
-  getData(URL, books);
-}
 async function deleteData(URL, value) {
   await axios.delete(`${URL}/${value}`);
-  getData(URL, books);
+  getData(bookURL, books);
+  getData(authorURL, authors);
 }
-function deleteFromApi(value) {
+async function postData(URL, value) {
+  await axios.post(URL, value);
+  getData(bookURL, books);
+  getData(authorURL, authors);
+}
+async function putData(URL, value) {
+  await axios.put(`${URL}/${value.id}`, value);
+  getData(bookURL, books);
+  getData(authorURL, authors);
+}
+function deleteBookFromApi(value) {
   deleteData(bookURL, value);
+}
+function postBookToApi(data) {
+  postData(bookURL, data.value);
+}
+function putAuthorToApi(data) {
+  putData(authorURL, data.value);
+  toggleEditing();
 }
 function toggleSidebar() {
   isOpenSidebar.value = !isOpenSidebar.value;
@@ -77,9 +91,11 @@ onMounted(() => {
   </Transition>
   <router-view
     :data="books"
-    @deleteRequest="deleteFromApi"
+    @deleteRequest="deleteBookFromApi"
     :isAdding="isAdding"
     @adding="toggleAdding"
+    @postRequest="postBookToApi"
+    @putRequest="putAuthorToApi"
     :isEditing="isEditing"
     :authors="authors"
   />
@@ -90,7 +106,7 @@ onMounted(() => {
   transition: all 0.3s ease-out;
 }
 .slide-fade-leave-active {
-  transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+  transition: all 0.3s cubic-bezier(1, 0.5, 0.8, 1);
 }
 .slide-fade-enter-from,
 .slide-fade-leave-to {

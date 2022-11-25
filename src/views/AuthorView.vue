@@ -1,41 +1,65 @@
 <template>
-  <div class="p-24" v-for="item in authorDetail">
+  <div class="p-24" v-for="item in authorDetailCompute">
     <div class="flex gap-8">
       <span class="w-96 aspect-square shrink-0"
-        ><img :src="item.image" @error="replaceByDefault" alt="" />
+        ><img
+          class="object-cover aspect-square"
+          :src="item.image"
+          @error="replaceByDefault"
+          alt=""
+        />
       </span>
       <form class="flex flex-col w-full">
         <input
           :disabled="!isEditing"
           class="py-2 text-3xl"
-          :value="`${item.firstName} ${item.lastName}`"
+          v-model="author.value.authorName"
         />
         <label
           >Date of birth:
-          <input :disabled="!isEditing" class="py-2" :value="`${item.dob}`" />
+          <input
+            :disabled="!isEditing"
+            type="date"
+            class="py-2"
+            v-model="author.value.dob"
+          />
         </label>
         <label
           >Gender:
-          <input
-            :disabled="!isEditing"
-            class="py-2"
-            :value="`${item.sex ? `Male` : `Female`}`"
-        /></label>
+          <span v-if="!isEditing">{{
+            author.value.sex ? "Male" : "Female"
+          }}</span>
+          <select id="gender" v-if="isEditing" class="py-2">
+            <option :value="true">Male</option>
+            <option :value="false">Female</option>
+          </select>
+        </label>
+
         <label
           >Bio:
-          <textarea :disabled="!isEditing" class="py-2 w-full h-36">{{
-            item.bio
-          }}</textarea>
+          <textarea
+            :disabled="!isEditing"
+            v-model="author.value.bio"
+            class="py-2 w-full h-36"
+          ></textarea>
         </label>
         <BaseInput
-          label="Book cover link:"
+          label="Author's image link:"
           v-if="isEditing"
-          :value="item.image"
+          v-model="author.value.image"
           type="text"
         />
-        <button v-if="isEditing" class="btn bg-black-800 w-fit text-white">
+        <button
+          v-if="isEditing"
+          :disabled="!author.value.authorName"
+          @click.prevent="onClickSave"
+          class="btn bg-black-800 w-fit text-white"
+        >
           Save
         </button>
+        <p v-if="isEditing" class="italic text-black-400">
+          *All changes will lost if you're not saving
+        </p>
       </form>
     </div>
     <section>
@@ -54,7 +78,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { reactive, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
@@ -62,15 +86,19 @@ import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
 const router = useRouter();
 const props = defineProps(["data", "authors", "isEditing", "isAdding"]);
-const emits = defineEmits(["deleteRequest", "adding"]);
-const authorDetail = computed(() => {
+const emits = defineEmits(["deleteRequest", "adding", "putRequest"]);
+
+const author = reactive({});
+
+const authorDetailCompute = computed(() => {
   let result = [...props.authors];
   result = result.filter((author) => author.id == route.params.id);
+  author.value = Object.assign({}, result[0]);
   return result.length ? result : router.push("/404");
 });
 const authorsBooksCompute = computed(() => {
   let result = [...props.data];
-  result = result.filter((b) => b.authorID == route.params.id);
+  result = result.filter((b) => b.author.authorID == route.params.id);
   return result;
 });
 
@@ -78,7 +106,9 @@ function replaceByDefault(e) {
   e.target.src = defaultImg;
 }
 function deleteFromApi(value) {
-  console.log(value);
   emits("deleteRequest", value);
+}
+function onClickSave() {
+  emits("putRequest", author);
 }
 </script>

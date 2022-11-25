@@ -9,6 +9,7 @@
         label="Book title"
         type="text"
         placeholder="Book title..."
+        v-model.trim="book.title"
       />
       <label for="author" class="font-bold py-2"
         >Author
@@ -16,10 +17,14 @@
           class="py-2 border border-cornflower-blue-400 rounded"
           name="Author"
           id="author"
+          v-model="book.author"
         >
           <option
             v-for="item in data"
-            :value="{ id: item.id, name: `${item.firstName} ${item.lastName}` }"
+            :value="{
+              authorID: item.id,
+              authorName: `${item.firstName} ${item.lastName}`,
+            }"
           >
             {{ item.firstName }} {{ item.lastName }}
           </option>
@@ -31,21 +36,41 @@
       label="Book cover link"
       placeholder="Cover here..."
       type="URL"
+      v-model.trim="book.image"
     />
     <BaseInput
       class=""
       label="Price ($)"
       placeholder="Price here..."
       type="text"
+      v-model.trim="book.price"
     />
     <BaseInput
       class=""
       label="Date of manufacture"
       placeholder="Date of manufacture here..."
       type="date"
+      v-model="book.manufactureDate"
     />
-    <div class="pt-12">
+    <label class="py-2 block"
+      >The book's link will be:
+      <input
+        class="w-full shadow-lg py-2 border border-cornflower-blue-400 rounded"
+        type="text"
+        :value="stringToSlug(book.title)"
+        disabled
+      />
+    </label>
+    <label for="summary">Summary (Optional)</label>
+    <textarea
+      name="summary"
+      v-model="book.summary"
+      id="summary"
+      class="w-full h-28"
+    ></textarea>
+    <div class="pt-6">
       <button
+        :disabled="!book.title || !book.author || !book.manufactureDate"
         type="submit"
         @click="onClickAdd"
         class="btn mx-[1px] bg-black-800 text-white"
@@ -69,23 +94,39 @@ import { reactive } from "vue";
 import BaseInput from "./BaseInput.vue";
 const props = defineProps(["data"]);
 const emits = defineEmits(["cancel", "add"]);
-const obj = reactive({
+const book = reactive({
   id: "",
   title: "",
-  author: {
-    id: null,
-    name: "",
-  },
+  author: {},
   price: null,
   image: "",
   manufactureDate: "",
   slug: "",
+  summary: "",
 });
 function onClickCancel() {
   emits("cancel");
 }
 function onClickAdd() {
-  emits("add");
+  emits("add", book);
+}
+function stringToSlug(str) {
+  str = str.replace(/^\s+|\s+$/g, ""); // trim
+  str = str.toLowerCase();
+
+  // remove accents
+  var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;";
+  var to = "aaaaeeeeiiiioooouuuunc------";
+  for (var i = 0, l = from.length; i < l; i++) {
+    str = str.replace(new RegExp(from.charAt(i), "g"), to.charAt(i));
+  }
+
+  str = str
+    .replace(/[^a-z0-9 -]/g, "") // remove invalid chars
+    .replace(/\s+/g, "-") // collapse whitespace and replace by -
+    .replace(/-+/g, "-"); // collapse dashes
+  book.slug = str;
+  return str;
 }
 </script>
 <script>

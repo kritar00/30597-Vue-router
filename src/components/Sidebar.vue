@@ -10,8 +10,8 @@
         v-for="(item, index) in authors"
         :key="`author-${index}`"
       >
-        <router-link :to="`/author/${item.id}`">
-          {{ item.firstName }} {{ item.lastName }}</router-link
+        <router-link @click="onClickClose" :to="`/author/${item.id}`">
+          {{ item.authorName }}</router-link
         >
       </li>
     </ul>
