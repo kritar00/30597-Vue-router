@@ -27,16 +27,7 @@
   <HomeView />
   <BookView />
   <AuthorView />
-  <router-view
-    :data="books"
-    @deleteRequest="deleteBookFromApi"
-    :isAdding="isAdding"
-    @adding="toggleAdding"
-    @postRequest="postBookToApi"
-    @putRequest="putAuthorToApi"
-    :isEditing="isEditing"
-    :authors="authors"
-  />
+  <router-view />
 </template>
 
 <style>
@@ -78,25 +69,7 @@ const isOpenSidebar = ref(false);
 const isEditing = ref(false);
 const isAdding = ref(false);
 const router = useRouter();
-async function getData(URL, data) {
-  const response = await axios.get(URL);
-  data.value = response.data;
-}
-async function deleteData(URL, value) {
-  await axios.delete(`${URL}/${value}`);
-  getData(bookURL, books);
-  getData(authorURL, authors);
-}
-async function postData(URL, value) {
-  await axios.post(URL, value);
-  getData(bookURL, books);
-  getData(authorURL, authors);
-}
-async function putData(URL, value) {
-  await axios.put(`${URL}/${value.id}`, value);
-  getData(bookURL, books);
-  getData(authorURL, authors);
-}
+
 function deleteBookFromApi(value) {
   deleteData(bookURL, value);
 }
