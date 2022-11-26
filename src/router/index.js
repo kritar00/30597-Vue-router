@@ -1,10 +1,10 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 const HomeView = () => import('../views/HomeView.vue')
 const BookView = () => import('../views/BookView.vue')
 const AuthorView = () => import('../views/AuthorView.vue')
 const PageNotFound = () => import('../views/PageNotFound.vue')
 const router = createRouter({
-    history: createWebHashHistory(),
+    history: createWebHistory(),
     routes: [
         {
             path: '/',

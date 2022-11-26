@@ -4,7 +4,7 @@
       class="bg-slate-200"
       v-for="(item, index) in data"
       :item="item"
-      :key="`book: ${index}`"
+      :key="`book:${index}`"
       :isEditing="isEditing"
       @delete="deleteFromApi"
     />
@@ -39,7 +39,7 @@ function deleteFromApi(value) {
   emits("deleteRequest", value);
 }
 function getDataFromComponent(value) {
-  bookData.value = Object.assign({}, value);
+  Object.assign(bookData, value);
 }
 function postToApi() {
   emits("postRequest", bookData);

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-24" v-for="item in authorDetailCompute">
+  <div class="p-24" v-for="item in authorDetail" :key="author.id">
     <div class="flex gap-8">
       <span class="w-96 aspect-square shrink-0"
         ><img
@@ -13,7 +13,7 @@
         <input
           :disabled="!isEditing"
           class="py-2 text-3xl"
-          v-model="author.value.authorName"
+          v-model="author.authorName"
         />
         <label
           >Date of birth:
@@ -21,14 +21,12 @@
             :disabled="!isEditing"
             type="date"
             class="py-2"
-            v-model="author.value.dob"
+            v-model="author.dob"
           />
         </label>
         <label
           >Gender:
-          <span v-if="!isEditing">{{
-            author.value.sex ? "Male" : "Female"
-          }}</span>
+          <span v-if="!isEditing">{{ author.sex ? "Male" : "Female" }}</span>
           <select id="gender" v-if="isEditing" class="py-2">
             <option :value="true">Male</option>
             <option :value="false">Female</option>
@@ -39,19 +37,19 @@
           >Bio:
           <textarea
             :disabled="!isEditing"
-            v-model="author.value.bio"
+            v-model="author.bio"
             class="py-2 w-full h-36"
           ></textarea>
         </label>
         <BaseInput
           label="Author's image link:"
           v-if="isEditing"
-          v-model="author.value.image"
+          v-model="author.image"
           type="text"
         />
         <button
           v-if="isEditing"
-          :disabled="!author.value.authorName"
+          :disabled="!author.authorName"
           @click.prevent="onClickSave"
           class="btn bg-black-800 w-fit text-white"
         >
@@ -78,7 +76,7 @@
 </template>
 
 <script setup>
-import { reactive, computed } from "vue";
+import { reactive, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
@@ -90,18 +88,19 @@ const emits = defineEmits(["deleteRequest", "adding", "putRequest"]);
 
 const author = reactive({});
 
-const authorDetailCompute = computed(() => {
+const authorDetail = () => {
   let result = [...props.authors];
+  console.log(result);
   result = result.filter((author) => author.id == route.params.id);
-  author.value = Object.assign({}, result[0]);
+  Object.assign(author, result[0]);
   return result.length ? result : router.push("/404");
-});
+};
 const authorsBooksCompute = computed(() => {
-  let result = [...props.data];
-  result = result.filter((b) => b.author.authorID == route.params.id);
-  return result;
+  return [...props.data].filter((b) => b.author.authorID == route.params.id);
 });
-
+onMounted(() => {
+  authorDetail;
+});
 function replaceByDefault(e) {
   e.target.src = defaultImg;
 }

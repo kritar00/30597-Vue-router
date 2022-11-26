@@ -20,13 +20,14 @@
           v-model="book.author"
         >
           <option
-            v-for="item in data"
+            v-for="(item, index) in data"
+            :key="`option:${index}`"
             :value="{
               authorID: item.id,
-              authorName: `${item.firstName} ${item.lastName}`,
+              authorName: `${item.authorName}`,
             }"
           >
-            {{ item.firstName }} {{ item.lastName }}
+            {{ item.authorName }}
           </option>
         </select></label
       >
