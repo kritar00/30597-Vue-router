@@ -1,10 +1,10 @@
 <template>
-  <div class="p-24" v-for="item in authorDetail" :key="author.id">
+  <div class="p-24">
     <div class="flex gap-8">
       <span class="w-96 aspect-square shrink-0"
         ><img
           class="object-cover aspect-square"
-          :src="item.image"
+          :src="author.image"
           @error="replaceByDefault"
           alt=""
         />
@@ -64,7 +64,7 @@
       <h2 class="text-3xl">More from this author</h2>
       <div class="pt-5 grid grid-cols-4">
         <BookCard
-          v-for="(item, index) in authorsBooksCompute"
+          v-for="(item, index) in books"
           :item="item"
           :isEditing="isEditing"
           :key="`authorsBook:${index}`"
@@ -76,6 +76,7 @@
 </template>
 
 <script setup>
+import { getData, putData } from "@/API/API.js";
 import { reactive, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
@@ -83,31 +84,40 @@ import defaultImg from "../assets/defaultUser.png";
 import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
 const router = useRouter();
-const props = defineProps(["data", "authors", "isEditing", "isAdding"]);
-const emits = defineEmits(["deleteRequest", "adding", "putRequest"]);
-
+const props = defineProps(["isEditing"]);
+const emits = defineEmits(["adding"]);
+const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
+const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const author = reactive({});
-
-const authorDetail = () => {
-  let result = [...props.authors];
+const books = reactive({});
+function authorDetail(data) {
+  let result = [...data];
   console.log(result);
   result = result.filter((author) => author.id == route.params.id);
+  if (!result.length) router.push("/404");
   Object.assign(author, result[0]);
-  return result.length ? result : router.push("/404");
+}
+const authorsBooks = (data) => {
+  Object.assign(
+    books,
+    [...data].filter((b) => b.author.authorID == route.params.id)
+  );
 };
-const authorsBooksCompute = computed(() => {
-  return [...props.data].filter((b) => b.author.authorID == route.params.id);
-});
-onMounted(() => {
-  authorDetail;
-});
 function replaceByDefault(e) {
   e.target.src = defaultImg;
 }
-function deleteFromApi(value) {
+const deleteFromApi = (value) => {
   emits("deleteRequest", value);
-}
-function onClickSave() {
+};
+const onClickSave = () => {
   emits("putRequest", author);
-}
+};
+onMounted(() => {
+  getData(authorURL).then((response) => {
+    authorDetail(response.data);
+  });
+  getData(bookURL).then((response) => {
+    authorsBooks(response.data);
+  });
+});
 </script>

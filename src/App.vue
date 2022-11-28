@@ -24,10 +24,11 @@
       :authors="authors"
     />
   </Transition>
-  <HomeView />
-  <BookView />
-  <AuthorView />
-  <router-view />
+  <router-view
+    :isEditing="isEditing"
+    :isAdding="isAdding"
+    @adding="toggleAdding"
+  />
 </template>
 
 <style>
@@ -54,32 +55,17 @@
 </style>
 
 <script setup>
-import axios from "axios";
+import { getData } from "@/API/API.js";
 import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import Sidebar from "./components/Sidebar.vue";
-import AuthorView from "./views/AuthorView.vue";
-import BookView from "./views/BookView.vue";
-import HomeView from "./views/HomeView.vue";
-const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
+
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
-const books = ref([]);
-const authors = ref([]);
 const isOpenSidebar = ref(false);
 const isEditing = ref(false);
 const isAdding = ref(false);
 const router = useRouter();
-
-function deleteBookFromApi(value) {
-  deleteData(bookURL, value);
-}
-function postBookToApi(data) {
-  postData(bookURL, data);
-}
-function putAuthorToApi(data) {
-  putData(authorURL, data.value);
-  toggleEditing();
-}
+const authors = ref([]);
 function toggleSidebar() {
   isOpenSidebar.value = !isOpenSidebar.value;
 }
@@ -98,7 +84,6 @@ router.beforeEach((to, from, next) => {
   next();
 });
 onMounted(() => {
-  getData(bookURL, books);
   getData(authorURL, authors);
 });
 </script>

@@ -4,7 +4,6 @@
     @adding="toggleAdding"
     @postRequest="postBookToApi"
     @putRequest="putAuthorToApi"
-    :isEditing="isEditing"
     :authors="authors"
 
 

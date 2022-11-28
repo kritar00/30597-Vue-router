@@ -2,7 +2,7 @@
   <div class="p-24 auto-rows-fr grid gap-x-2 gap-y-8 grid-cols-4">
     <BookCard
       class="bg-slate-200"
-      v-for="(item, index) in data"
+      v-for="(item, index) in books"
       :item="item"
       :key="`book:${index}`"
       :isEditing="isEditing"
@@ -26,23 +26,44 @@
 </template>
 
 <script setup>
+import { getData, postData, deleteData } from "@/API/API.js";
 import AddMore from "../components/AddMore.vue";
 import BookCard from "../components/BookCard.vue";
-import { reactive } from "vue";
-const props = defineProps(["data", "authors", "isEditing", "isAdding"]);
-const emits = defineEmits(["deleteRequest", "adding", "postRequest"]);
-const bookData = reactive({});
+import { ref, reactive, onMounted } from "vue";
+const props = defineProps(["isEditing", "isAdding"]);
+const emits = defineEmits(["adding"]);
+const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
+const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
+const newBookData = reactive({});
+const books = ref([]);
+const authors = ref([]);
+
 function toggleAdd() {
   emits("adding");
 }
-function deleteFromApi(value) {
-  emits("deleteRequest", value);
+async function deleteFromApi(value) {
+  await deleteData(bookURL, value);
+  getData(bookURL).then((response) => {
+    books.value = response.data;
+  });
 }
 function getDataFromComponent(value) {
-  Object.assign(bookData, value);
+  Object.assign(newBookData, value);
 }
-function postToApi() {
-  emits("postRequest", bookData);
-  toggleAdd();
+async function postToApi() {
+  await postData(bookURL, newBookData);
+  getData(bookURL).then((response) => {
+    books.value = response.data;
+    toggleAdd();
+  });
 }
+
+onMounted(() => {
+  getData(bookURL).then((response) => {
+    books.value = response.data;
+  });
+  getData(authorURL).then((response) => {
+    authors.value = response.data;
+  });
+});
 </script>
