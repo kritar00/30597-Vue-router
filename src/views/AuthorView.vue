@@ -101,7 +101,6 @@ const author = reactive({});
 const books = reactive({});
 const authorDetail = (data) => {
   let result = [...data];
-  console.log(result);
   result = result.filter((author) => author.id == route.params.id);
   if (!result.length) router.push("/404");
   Object.assign(author, result[0]);
