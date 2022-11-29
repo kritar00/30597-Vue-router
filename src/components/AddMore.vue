@@ -56,7 +56,7 @@
     <label class="py-2 block"
       >The book's link will be:
       <input
-        class="w-full shadow-lg py-2 border border-cornflower-blue-400 rounded"
+        class="w-full shadow-lg py-2 border border-black-400 bg-black-100 rounded"
         type="text"
         :value="stringToSlug(book.title)"
         disabled

@@ -2,7 +2,7 @@
   <div class="p-24">
     <div class="flex gap-8">
       <span class="shrink-0">
-        <defaultImg
+        <img
           class="aspect-[9/14] w-96 object-cover"
           :src="book.image"
           @error="replaceByDefault"
@@ -11,7 +11,10 @@
       </span>
       <div>
         <p class="py-2">{{ book.title }}</p>
-        <router-link :to="`/author/${book.author.authorID}`" class="block py-2"
+        <router-link
+          v-if="book.author"
+          :to="`/author/${book.author.authorID}`"
+          class="block py-2"
           >Author: {{ book.author.authorName }}</router-link
         >
         <p class="py-2">Price: ${{ book.price }}</p>
@@ -22,6 +25,7 @@
       </div>
     </div>
     <router-link
+      v-if="book.author"
       :to="`/author/${book.author.authorID}`"
       class="float-right py-4"
       >More info about this author<i class="uil uil-angle-right-b"></i
@@ -49,8 +53,12 @@ function replaceByDefault(e) {
   e.target.src = defaultImg;
 }
 onMounted(() => {
-  getData(bookURL).then((response) => {
-    bookDetail(response.data);
-  });
+  getData(bookURL)
+    .then((response) => {
+      bookDetail(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 </script>

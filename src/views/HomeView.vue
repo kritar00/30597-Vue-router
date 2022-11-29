@@ -59,11 +59,19 @@ async function postToApi() {
 }
 
 onMounted(() => {
-  getData(bookURL).then((response) => {
-    books.value = response.data;
-  });
-  getData(authorURL).then((response) => {
-    authors.value = response.data;
-  });
+  getData(bookURL)
+    .then((response) => {
+      books.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  getData(authorURL)
+    .then((response) => {
+      authors.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 </script>

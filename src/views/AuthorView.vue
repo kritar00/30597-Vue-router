@@ -11,31 +11,40 @@
       </span>
       <form class="flex flex-col w-full">
         <input
+          :class="classNameCompute"
           :disabled="!isEditing"
           class="py-2 text-3xl"
           v-model="author.authorName"
         />
-        <label
+        <label class="py-2"
           >Date of birth:
           <input
+            :class="classNameCompute"
             :disabled="!isEditing"
             type="date"
             class="py-2"
             v-model="author.dob"
           />
         </label>
-        <label
+        <label class="py-2"
           >Gender:
           <span v-if="!isEditing">{{ author.sex ? "Male" : "Female" }}</span>
-          <select id="gender" v-if="isEditing" class="py-2">
+          <select
+            id="gender"
+            v-model="author.sex"
+            v-if="isEditing"
+            class="py-2"
+            :class="classNameCompute"
+          >
             <option :value="true">Male</option>
             <option :value="false">Female</option>
           </select>
         </label>
 
-        <label
+        <label class="py-2"
           >Bio:
           <textarea
+            :class="classNameCompute"
             :disabled="!isEditing"
             v-model="author.bio"
             class="py-2 w-full h-36"
@@ -56,7 +65,7 @@
           Save
         </button>
         <p v-if="isEditing" class="italic text-black-400">
-          *All changes will lost if you're not saving
+          *All changes will be lost if you're not saving
         </p>
       </form>
     </div>
@@ -76,7 +85,7 @@
 </template>
 
 <script setup>
-import { getData, putData } from "@/API/API.js";
+import { getData, putData, deleteData } from "@/API/API.js";
 import { reactive, computed, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
@@ -85,39 +94,59 @@ import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
 const router = useRouter();
 const props = defineProps(["isEditing"]);
-const emits = defineEmits(["adding"]);
+const emits = defineEmits(["saved"]);
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const author = reactive({});
 const books = reactive({});
-function authorDetail(data) {
+const authorDetail = (data) => {
   let result = [...data];
   console.log(result);
   result = result.filter((author) => author.id == route.params.id);
   if (!result.length) router.push("/404");
   Object.assign(author, result[0]);
-}
+};
 const authorsBooks = (data) => {
   Object.assign(
     books,
     [...data].filter((b) => b.author.authorID == route.params.id)
   );
 };
-function replaceByDefault(e) {
+const classNameCompute = computed(() => {
+  return props.isEditing
+    ? "border border-cornflower-blue-400 rounded"
+    : "bg-transparent";
+});
+const replaceByDefault = (e) => {
   e.target.src = defaultImg;
-}
-const deleteFromApi = (value) => {
-  emits("deleteRequest", value);
 };
-const onClickSave = () => {
-  emits("putRequest", author);
-};
-onMounted(() => {
-  getData(authorURL).then((response) => {
-    authorDetail(response.data);
-  });
+const deleteFromApi = async (value) => {
+  await deleteData(bookURL, value);
   getData(bookURL).then((response) => {
     authorsBooks(response.data);
   });
+};
+const onClickSave = async () => {
+  await putData(authorURL, author);
+  emits("saved");
+  getData(authorURL).then((response) => {
+    authorDetail(response.data);
+  });
+};
+onMounted(() => {
+  getData(authorURL)
+    .then((response) => {
+      authorDetail(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  getData(bookURL)
+    .then((response) => {
+      authorsBooks(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 </script>

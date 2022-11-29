@@ -28,6 +28,7 @@
     :isEditing="isEditing"
     :isAdding="isAdding"
     @adding="toggleAdding"
+    @saved="toggleEditing"
   />
 </template>
 
@@ -84,6 +85,12 @@ router.beforeEach((to, from, next) => {
   next();
 });
 onMounted(() => {
-  getData(authorURL, authors);
+  getData(authorURL, authors)
+    .then((response) => {
+      authors.value = response.data;
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 </script>
