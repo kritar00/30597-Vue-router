@@ -19,14 +19,14 @@
   <Transition name="slide-fade">
     <Sidebar
       class="z-50"
-      v-if="isOpenSidebar"
+      v-if="storeRootData.isOpenSidebar"
       @toggleSidebar="toggleSidebar"
-      :authors="authors"
+      :storeApiData="storeApiData"
     />
   </Transition>
   <router-view
-    :isEditing="isEditing"
-    :isAdding="isAdding"
+    :isEditing="storeRootData.isEditing"
+    :isAdding="storeRootData.isAdding"
     @adding="toggleAdding"
     @saved="toggleEditing"
   />
@@ -56,41 +56,40 @@
 </style>
 
 <script setup>
-import { getData } from "@/API/API.js";
-import { ref, onMounted, computed } from "vue";
+import { onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import Sidebar from "./components/Sidebar.vue";
-
-const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
-const isOpenSidebar = ref(false);
-const isEditing = ref(false);
-const isAdding = ref(false);
+import { useStore } from "vuex";
 const router = useRouter();
-const authors = ref([]);
-function toggleSidebar() {
-  isOpenSidebar.value = !isOpenSidebar.value;
-}
-function toggleEditing() {
-  isEditing.value = !isEditing.value;
-  if (!isEditing.value) isAdding.value = false;
-}
-function toggleAdding() {
-  isAdding.value = !isAdding.value;
-}
+const store = useStore();
+const toggleSidebar = () => {
+  store.commit("toggleSidebar");
+};
+const toggleEditing = () => {
+  store.commit("toggleEditing");
+};
+const toggleAdding = () => {
+  store.commit("toggleAdding");
+};
 const editIconCompute = computed(() => {
-  return isEditing.value ? "uil uil-times" : "uil uil-edit";
+  return store.state.validators.isEditing ? "uil uil-times" : "uil uil-edit";
 });
 router.beforeEach((to, from, next) => {
-  if (isEditing.value) isEditing.value = !isEditing.value;
+  if (store.state.validators.isEditing) toggleEditing();
   next();
 });
+const storeApiData = computed(() => {
+  return store.state.a;
+});
+const storeRootData = computed(() => {
+  return store.state.validators;
+});
+const asyncGetData = () => {
+  store.dispatch("a/assignAuthors");
+  store.dispatch("a/assignBooks");
+};
+
 onMounted(() => {
-  getData(authorURL, authors)
-    .then((response) => {
-      authors.value = response.data;
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  asyncGetData();
 });
 </script>

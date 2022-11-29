@@ -73,7 +73,7 @@
       <h2 class="text-3xl">More from this author</h2>
       <div class="pt-5 grid grid-cols-4">
         <BookCard
-          v-for="(item, index) in books"
+          v-for="(item, index) in authorsBooks"
           :item="item"
           :isEditing="isEditing"
           :key="`authorsBook:${index}`"
@@ -87,6 +87,7 @@
 <script setup>
 import { getData, putData, deleteData } from "@/API/API.js";
 import { reactive, computed, onMounted, watch } from "vue";
+import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
@@ -97,22 +98,29 @@ const props = defineProps(["isEditing"]);
 const emits = defineEmits(["saved"]);
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
+const store = useStore();
 const author = reactive({});
-const books = reactive({});
+const authorsBooks = computed(() => {
+  // Object.assign(
+  //   books,
+  //   [...data].filter((b) => b.author.authorID == route.params.id)
+  // );
+  return store.getters["a/authorsBooks"](route.params.id);
+});
+
+const storeData = computed(() => {
+  let data = store.state.a;
+  return data;
+});
 const authorDetail = (data) => {
+  // return store.getters["a/authorDetail"](route.params.id);
   let result = [...data];
   result = result.filter((author) => author.id == route.params.id);
-  if (!result.length) router.push("/404");
   Object.assign(author, result[0]);
-};
-const authorsBooks = (data) => {
-  Object.assign(
-    books,
-    [...data].filter((b) => b.author.authorID == route.params.id)
-  );
+  if (!result.length) router.push("/404");
 };
 const classNameCompute = computed(() => {
-  return props.isEditing
+  return store.state.validators.isEditing
     ? "border border-cornflower-blue-400 rounded"
     : "bg-transparent";
 });
@@ -132,33 +140,20 @@ const onClickSave = async () => {
     authorDetail(response.data);
   });
 };
-watch(
-  route,
-  (to, from) => {
-    getData(authorURL)
-      .then((response) => {
-        authorDetail(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  },
-  { flush: "pre", immediate: true, deep: true }
-);
-onMounted(() => {
-  getData(authorURL)
-    .then((response) => {
-      authorDetail(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  getData(bookURL)
-    .then((response) => {
-      authorsBooks(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+// watch(
+//   route,
+//   (to, from) => {
+//     getData(authorURL)
+//       .then((response) => {
+//         authorDetail(response.data);
+//       })
+//       .catch((error) => {
+//         console.log(error);
+//       });
+//   },
+//   { flush: "pre", immediate: true, deep: true }
+// );
+onMounted(async () => {
+  await authorDetail(storeData);
 });
 </script>
