@@ -86,7 +86,7 @@
 
 <script setup>
 import { getData, putData, deleteData } from "@/API/API.js";
-import { reactive, computed, onMounted } from "vue";
+import { reactive, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
@@ -132,6 +132,19 @@ const onClickSave = async () => {
     authorDetail(response.data);
   });
 };
+watch(
+  route,
+  (to, from) => {
+    getData(authorURL)
+      .then((response) => {
+        authorDetail(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
+  { flush: "pre", immediate: true, deep: true }
+);
 onMounted(() => {
   getData(authorURL)
     .then((response) => {
