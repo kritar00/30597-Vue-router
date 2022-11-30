@@ -79,14 +79,14 @@ router.beforeEach((to, from, next) => {
   next();
 });
 const storeApiData = computed(() => {
-  return store.state.a;
+  return store.state.api;
 });
 const storeRootData = computed(() => {
   return store.state.validators;
 });
 const asyncGetData = () => {
-  store.dispatch("a/assignAuthors");
-  store.dispatch("a/assignBooks");
+  store.dispatch("api/assignAuthors");
+  store.dispatch("api/assignBooks");
 };
 
 onMounted(() => {

@@ -3,10 +3,12 @@
     <div class="flex gap-8">
       <span class="shrink-0">
         <img
-          class="aspect-[9/14] w-96 object-cover"
+          class="object-cover"
           :src="bookCompute.image"
           @error="replaceByDefault"
-          alt=""
+          alt="Image cover of the book"
+          width="384"
+          height="597"
         />
       </span>
       <div>
@@ -42,9 +44,7 @@ const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const route = useRoute();
 const store = useStore();
 const bookCompute = computed(() => {
-  return store.state.a.books.filter(
-    (book) => book.slug == route.params.slug
-  )[0];
+  return store.state.api.books.find((book) => book.slug == route.params.slug);
 });
 
 function replaceByDefault(e) {

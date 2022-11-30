@@ -18,7 +18,4 @@ const props = defineProps({
   type: String,
 });
 const emits = defineEmits(["update:modelValue"]);
-function onTyping(event) {
-  emits("update:modelValue", event.target.value);
-}
 </script>

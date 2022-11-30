@@ -2,7 +2,7 @@
   <div class="p-24 auto-rows-fr grid gap-x-2 gap-y-8 grid-cols-4">
     <BookCard
       class="bg-slate-200"
-      v-for="(item, index) in storeApiData.books"
+      v-for="(item, index) in store.state.api.books"
       :item="item"
       :key="`book:${index}`"
       :isEditing="isEditing"
@@ -18,7 +18,7 @@
         <AddMore
           @cancel="toggleAdd"
           @add="getDataFromComponent"
-          :data="storeApiData.authors"
+          :data="store.state.api.authors"
         />
       </form>
     </transition>
@@ -31,20 +31,23 @@ import AddMore from "../components/AddMore.vue";
 import BookCard from "../components/BookCard.vue";
 import { reactive, onMounted, computed } from "vue";
 import { useStore } from "vuex";
-const props = defineProps(["isEditing", "isAdding"]);
+const props = defineProps({
+  isEditing: Boolean,
+  isAdding: Boolean,
+});
 const emits = defineEmits(["adding"]);
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const newBookData = reactive({});
 const store = useStore();
 const asyncGetData = () => {
-  store.dispatch("a/assignBooks");
+  store.dispatch("api/assignBooks");
 };
 function toggleAdd() {
   emits("adding");
 }
 async function deleteFromApi(value) {
   await deleteData(bookURL, value);
-  store.dispatch("a/assignBooks");
+  store.dispatch("api/assignBooks");
 }
 function getDataFromComponent(value) {
   Object.assign(newBookData, value);
@@ -54,9 +57,5 @@ async function postToApi() {
   toggleAdd();
   asyncGetData();
 }
-const storeApiData = computed(() => {
-  let data = store.state.a;
-  return data;
-});
 onMounted(() => {});
 </script>

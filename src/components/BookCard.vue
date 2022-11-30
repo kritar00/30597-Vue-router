@@ -1,13 +1,13 @@
 <template>
   <div v-if="item" class="relative">
-    <span>
-      <img
-        class="w-36 aspect-[9/14] m-auto object-cover"
-        :src="item.image"
-        @error="replaceByDefault"
-        alt=""
-      />
-    </span>
+    <img
+      class="m-auto object-cover"
+      :src="item.image"
+      @error="replaceByDefault"
+      alt="Book card image"
+      width="144"
+      height="224"
+    />
     <router-link
       class="whitespace-nowrap overflow-hidden py-3 block"
       :to="`/book/${item.slug}`"
@@ -40,7 +40,7 @@
 
 <script setup>
 import defaultImg from "../assets/defaultImage.jpg";
-const props = defineProps(["item", "isEditing"]);
+const props = defineProps({ item: Object, isEditing: Boolean });
 const emits = defineEmits(["delete", "add"]);
 const replaceByDefault = (e) => {
   e.target.src = defaultImg;

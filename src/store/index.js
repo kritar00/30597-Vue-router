@@ -19,13 +19,13 @@ const apiModule = {
     },
     getters: {
         authorDetail: (state) => (id) => {
-            return [...state.authors].filter((author) => author.id == id);
+            return state.authors.filter((author) => author.id == id);
         },
         bookDetail: (state) => (slug) => {
-            return [...state.books].filter((book) => book.slug == slug)
+            return state.books.filter((book) => book.slug == slug)
         },
         authorsBooks: (state) => (id) => {
-            return [...state.books].filter((b) => b.author.authorID == id)
+            return state.books.filter((b) => b.author.authorID == id)
         }
     },
     actions: {
@@ -48,7 +48,7 @@ const apiModule = {
 
 const store = createStore({
     modules: {
-        a: apiModule
+        api: apiModule
     },
     state: {
         validators: {

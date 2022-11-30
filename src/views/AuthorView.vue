@@ -1,12 +1,14 @@
 <template>
   <div class="p-24">
     <div class="flex gap-8">
-      <span class="w-96 aspect-square shrink-0"
+      <span class="aspect-square shrink-0"
         ><img
           class="object-cover aspect-square"
           :src="authorDetail.image"
           @error="replaceByDefault"
-          alt=""
+          alt="Picture of author"
+          width="384"
+          height="384"
         />
       </span>
       <form class="flex flex-col w-full">
@@ -95,18 +97,20 @@ import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
 import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
-const props = defineProps(["isEditing"]);
+const props = defineProps({
+  isEditing: Boolean,
+});
 const emits = defineEmits(["saved"]);
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const store = useStore();
 const author = reactive({});
 const authorsBooks = computed(() => {
-  return store.getters["a/authorsBooks"](route.params.id);
+  return store.getters["api/authorsBooks"](route.params.id);
 });
 
 const authorDetail = computed(() => {
-  return store.getters["a/authorDetail"](route.params.id)[0];
+  return store.getters["api/authorDetail"](route.params.id)[0];
 });
 const classNameCompute = computed(() => {
   return store.state.validators.isEditing
@@ -118,15 +122,10 @@ const replaceByDefault = (e) => {
 };
 const deleteFromApi = async (value) => {
   await deleteData(bookURL, value);
-  store.dispatch("a/assignBooks");
+  store.dispatch("api/assignBooks");
 };
 const onClickSave = async () => {
   await putData(authorURL, authorDetail);
   emits("saved");
-};
-const validateRoute = (params) => {
-  return [...store.state.a.authors].filter((item) => item.id == params).length
-    ? true
-    : false;
 };
 </script>

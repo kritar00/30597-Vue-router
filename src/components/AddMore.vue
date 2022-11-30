@@ -5,7 +5,6 @@
     <h2 class="text-4xl font-semibold pb-8 text-black-800">New book</h2>
     <div class="flex gap-3">
       <BaseInput
-        class=""
         label="Book title"
         type="text"
         placeholder="Book title..."
@@ -33,7 +32,6 @@
       >
     </div>
     <BaseInput
-      class=""
       label="Book cover link"
       placeholder="Cover here..."
       type="URL"
@@ -80,7 +78,6 @@
       </button>
       <button
         type="button"
-        b
         @click="onClickCancel"
         class="btn mx-[1px] underline"
       >
@@ -93,7 +90,9 @@
 <script setup>
 import { reactive } from "vue";
 import BaseInput from "./BaseInput.vue";
-const props = defineProps(["data"]);
+const props = defineProps({
+  data: Array,
+});
 const emits = defineEmits(["cancel", "add"]);
 const book = reactive({
   id: "",

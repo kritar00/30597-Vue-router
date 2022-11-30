@@ -2,7 +2,7 @@
   <div class="fixed top-0 left-0 w-2/6 h-full bg-black-900 text-white">
     <h2 class="text-center text-3xl pt-4">List of Authors</h2>
     <button @click="onClickClose" class="absolute p-3 top-0 right-0">
-      <img :src="closeIcon" alt="" />
+      <img :src="closeIcon" alt="Close icon" />
     </button>
     <ul class="pt-8">
       <li
