@@ -1,31 +1,28 @@
 import { createStore } from 'vuex'
 import { getData } from '@/API/API.js'
-import router from '@/router'
 
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
-
 const apiModule = {
     namespaced: true,
     state: {
         books: [],
-        authors: [],
-        currentAuthor: {}
+        authors: []
     },
     mutations: {
         assignBooks(state, payload) {
-            Object.assign(state.books, payload)
+            state.books = payload
         },
         assignAuthors(state, payload) {
-            Object.assign(state.authors, payload)
+            state.authors = payload
         }
     },
     getters: {
-        authorDetail: (state) => id => {
-            let result = [...state.authors];
-            result = result.filter((author) => author.id == route.params.id);
-            if (!result.length) router.push("/404");
-            Object.assign(state.currentAuthor, result[0]);
+        authorDetail: (state) => (id) => {
+            return [...state.authors].filter((author) => author.id == id);
+        },
+        bookDetail: (state) => (slug) => {
+            return [...state.books].filter((book) => book.slug == slug)
         },
         authorsBooks: (state) => (id) => {
             return [...state.books].filter((b) => b.author.authorID == id)
@@ -45,9 +42,6 @@ const apiModule = {
             }).catch((error) => {
                 console.log(error);
             });
-        },
-        assignCurrentAuthor({ state, commit, getters }, payload) {
-
         }
     }
 }

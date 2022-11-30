@@ -4,7 +4,7 @@
       <span class="w-96 aspect-square shrink-0"
         ><img
           class="object-cover aspect-square"
-          :src="author.image"
+          :src="authorDetail.image"
           @error="replaceByDefault"
           alt=""
         />
@@ -14,7 +14,7 @@
           :class="classNameCompute"
           :disabled="!isEditing"
           class="py-2 text-3xl"
-          v-model="author.authorName"
+          v-model="authorDetail.authorName"
         />
         <label class="py-2"
           >Date of birth:
@@ -23,15 +23,17 @@
             :disabled="!isEditing"
             type="date"
             class="py-2"
-            v-model="author.dob"
+            v-model="authorDetail.dob"
           />
         </label>
         <label class="py-2"
           >Gender:
-          <span v-if="!isEditing">{{ author.sex ? "Male" : "Female" }}</span>
+          <span v-if="!isEditing">{{
+            authorDetail.sex ? "Male" : "Female"
+          }}</span>
           <select
             id="gender"
-            v-model="author.sex"
+            v-model="authorDetail.sex"
             v-if="isEditing"
             class="py-2"
             :class="classNameCompute"
@@ -46,19 +48,19 @@
           <textarea
             :class="classNameCompute"
             :disabled="!isEditing"
-            v-model="author.bio"
+            v-model="authorDetail.bio"
             class="py-2 w-full h-36"
           ></textarea>
         </label>
         <BaseInput
           label="Author's image link:"
           v-if="isEditing"
-          v-model="author.image"
+          v-model="authorDetail.image"
           type="text"
         />
         <button
           v-if="isEditing"
-          :disabled="!author.authorName"
+          :disabled="!authorDetail.authorName"
           @click.prevent="onClickSave"
           class="btn bg-black-800 w-fit text-white"
         >
@@ -86,7 +88,7 @@
 
 <script setup>
 import { getData, putData, deleteData } from "@/API/API.js";
-import { reactive, computed, onMounted, watch } from "vue";
+import { ref, reactive, computed, onMounted, watch, onBeforeMount } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
@@ -108,17 +110,9 @@ const authorsBooks = computed(() => {
   return store.getters["a/authorsBooks"](route.params.id);
 });
 
-const storeData = computed(() => {
-  let data = store.state.a;
-  return data;
+const authorDetail = computed(() => {
+  return store.getters["a/authorDetail"](route.params.id)[0];
 });
-const authorDetail = (data) => {
-  // return store.getters["a/authorDetail"](route.params.id);
-  let result = [...data];
-  result = result.filter((author) => author.id == route.params.id);
-  Object.assign(author, result[0]);
-  if (!result.length) router.push("/404");
-};
 const classNameCompute = computed(() => {
   return store.state.validators.isEditing
     ? "border border-cornflower-blue-400 rounded"
@@ -129,31 +123,22 @@ const replaceByDefault = (e) => {
 };
 const deleteFromApi = async (value) => {
   await deleteData(bookURL, value);
-  getData(bookURL).then((response) => {
-    authorsBooks(response.data);
-  });
+  store.dispatch("a/assignBooks");
 };
 const onClickSave = async () => {
-  await putData(authorURL, author);
+  await putData(authorURL, authorDetail);
   emits("saved");
-  getData(authorURL).then((response) => {
-    authorDetail(response.data);
-  });
 };
-// watch(
-//   route,
-//   (to, from) => {
-//     getData(authorURL)
-//       .then((response) => {
-//         authorDetail(response.data);
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//       });
-//   },
-//   { flush: "pre", immediate: true, deep: true }
-// );
-onMounted(async () => {
-  await authorDetail(storeData);
+const validateRoute = (params) => {
+  return [...store.state.a.authors].filter((item) => item.id == params).length
+    ? true
+    : false;
+};
+// const storeCurrentAuthor = computed(() => {
+//   return store.state.a.currentAuthor;
+// });
+
+onMounted(() => {
+  // store.dispatch("a/assignCurrentAuthor", route.params.id);
 });
 </script>

@@ -2,7 +2,7 @@
   <div class="p-24 auto-rows-fr grid gap-x-2 gap-y-8 grid-cols-4">
     <BookCard
       class="bg-slate-200"
-      v-for="(item, index) in storeData.books"
+      v-for="(item, index) in storeApiData.books"
       :item="item"
       :key="`book:${index}`"
       :isEditing="isEditing"
@@ -18,7 +18,7 @@
         <AddMore
           @cancel="toggleAdd"
           @add="getDataFromComponent"
-          :data="storeData.authors"
+          :data="storeApiData.authors"
         />
       </form>
     </transition>
@@ -36,11 +36,8 @@ const emits = defineEmits(["adding"]);
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const newBookData = reactive({});
-const books = ref([]);
-const authors = ref([]);
 const store = useStore();
 const asyncGetData = () => {
-  store.dispatch("a/assignAuthors");
   store.dispatch("a/assignBooks");
 };
 function toggleAdd() {
@@ -48,9 +45,7 @@ function toggleAdd() {
 }
 async function deleteFromApi(value) {
   await deleteData(bookURL, value);
-  getData(bookURL).then((response) => {
-    books.value = response.data;
-  });
+  store.dispatch("a/assignBooks");
 }
 function getDataFromComponent(value) {
   Object.assign(newBookData, value);
@@ -60,7 +55,7 @@ async function postToApi() {
   toggleAdd();
   asyncGetData();
 }
-const storeData = computed(() => {
+const storeApiData = computed(() => {
   let data = store.state.a;
   return data;
 });

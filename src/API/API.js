@@ -6,8 +6,8 @@ async function deleteData(URL, id) {
 async function postData(URL, value) {
     await axios.post(URL, value);
 }
-async function putData(URL, value) {
-    await axios.put(`${URL}/${value.id}`, value);
+async function putData(URL, data) {
+    await axios.put(`${URL}/${data.value.id}`, data.value);
 }
 async function getData(URL) {
     return await axios.get(URL);
