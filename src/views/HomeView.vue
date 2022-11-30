@@ -26,15 +26,14 @@
 </template>
 
 <script setup>
-import { getData, postData, deleteData } from "@/API/API.js";
+import { postData, deleteData } from "@/API/API.js";
 import AddMore from "../components/AddMore.vue";
 import BookCard from "../components/BookCard.vue";
-import { ref, reactive, onMounted, computed } from "vue";
+import { reactive, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 const props = defineProps(["isEditing", "isAdding"]);
 const emits = defineEmits(["adding"]);
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
-const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const newBookData = reactive({});
 const store = useStore();
 const asyncGetData = () => {

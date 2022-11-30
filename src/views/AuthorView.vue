@@ -87,26 +87,20 @@
 </template>
 
 <script setup>
-import { getData, putData, deleteData } from "@/API/API.js";
-import { ref, reactive, computed, onMounted, watch, onBeforeMount } from "vue";
+import { putData, deleteData } from "@/API/API.js";
+import { reactive, computed } from "vue";
 import { useStore } from "vuex";
 import { useRoute, useRouter } from "vue-router";
 import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
 import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
-const router = useRouter();
-const props = defineProps(["isEditing"]);
 const emits = defineEmits(["saved"]);
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const store = useStore();
 const author = reactive({});
 const authorsBooks = computed(() => {
-  // Object.assign(
-  //   books,
-  //   [...data].filter((b) => b.author.authorID == route.params.id)
-  // );
   return store.getters["a/authorsBooks"](route.params.id);
 });
 
@@ -134,11 +128,4 @@ const validateRoute = (params) => {
     ? true
     : false;
 };
-// const storeCurrentAuthor = computed(() => {
-//   return store.state.a.currentAuthor;
-// });
-
-onMounted(() => {
-  // store.dispatch("a/assignCurrentAuthor", route.params.id);
-});
 </script>

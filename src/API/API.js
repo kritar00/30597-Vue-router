@@ -11,7 +11,6 @@ async function putData(URL, data) {
 }
 async function getData(URL) {
     return await axios.get(URL);
-    // data.value = response.data;
 }
 
 export { deleteData, postData, putData, getData }

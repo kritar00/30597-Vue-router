@@ -34,9 +34,8 @@
 </template>
 
 <script setup>
-import { getData } from "@/API/API.js";
-import { ref, onMounted, reactive, computed, onBeforeMount } from "vue";
-import { useRoute, useRouter } from "vue-router";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import defaultImg from "../assets/defaultImage.jpg";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
