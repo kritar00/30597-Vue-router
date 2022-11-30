@@ -95,6 +95,7 @@ import BookCard from "../components/BookCard.vue";
 import defaultImg from "../assets/defaultUser.png";
 import BaseInput from "../components/BaseInput.vue";
 const route = useRoute();
+const props = defineProps(["isEditing"]);
 const emits = defineEmits(["saved"]);
 const authorURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/author";
 const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
