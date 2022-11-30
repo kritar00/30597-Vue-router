@@ -67,7 +67,7 @@
       name="summary"
       v-model="book.summary"
       id="summary"
-      class="w-full h-28"
+      class="w-full h-28 border border-cornflower-blue-400 rounded"
     ></textarea>
     <div class="pt-6">
       <button
