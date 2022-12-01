@@ -7,7 +7,8 @@ async function postData(URL, value) {
     await axios.post(URL, value);
 }
 async function putData(URL, data) {
-    await axios.put(`${URL}/${data.value.id}`, data.value);
+    console.log(data);
+    await axios.put(`${URL}/${data.id}`, data);
 }
 async function getData(URL) {
     return await axios.get(URL);

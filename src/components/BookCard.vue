@@ -1,7 +1,7 @@
 <template>
   <div v-if="item" class="relative">
     <img
-      class="m-auto object-cover"
+      class="m-auto h-[244px] object-cover"
       :src="item.image"
       @error="replaceByDefault"
       alt="Book card image"
@@ -19,7 +19,7 @@
     >
       Author: {{ item.author.authorName }}
     </router-link>
-    <p class="font-bold">Price: ${{ item.price }}</p>
+    <p class="font-bold">Price: {{ item.price }}</p>
     <button
       v-if="isEditing"
       @click="onClickDelete"

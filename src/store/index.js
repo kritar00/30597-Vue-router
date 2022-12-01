@@ -19,10 +19,10 @@ const apiModule = {
     },
     getters: {
         authorDetail: (state) => (id) => {
-            return state.authors.filter((author) => author.id == id);
+            return state.authors.find((author) => author.id == id);
         },
         bookDetail: (state) => (slug) => {
-            return state.books.filter((book) => book.slug == slug)
+            return state.books.find((book) => book.slug == slug)
         },
         authorsBooks: (state) => (id) => {
             return state.books.filter((b) => b.author.authorID == id)

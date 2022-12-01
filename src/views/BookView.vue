@@ -44,7 +44,7 @@ const bookURL = "https://636db3bc91576e19e32daf8a.mockapi.io/nttp/books";
 const route = useRoute();
 const store = useStore();
 const bookCompute = computed(() => {
-  return store.state.api.books.find((book) => book.slug == route.params.slug);
+  return store.getters["api/bookDetail"](route.params.slug);
 });
 
 function replaceByDefault(e) {

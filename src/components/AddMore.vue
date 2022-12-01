@@ -41,7 +41,7 @@
       class=""
       label="Price ($)"
       placeholder="Price here..."
-      type="text"
+      type="number"
       v-model.trim="book.price"
     />
     <BaseInput
@@ -90,6 +90,7 @@
 <script setup>
 import { reactive } from "vue";
 import BaseInput from "./BaseInput.vue";
+import { formatter } from "@/helpers/helpers.js";
 const props = defineProps({
   data: Array,
 });
@@ -108,6 +109,7 @@ function onClickCancel() {
   emits("cancel");
 }
 function onClickAdd() {
+  book.price = formatter.format(book.price);
   emits("add", book);
 }
 function stringToSlug(str) {
